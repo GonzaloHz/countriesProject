@@ -3,8 +3,8 @@ const sequelize = require('../database/database')
 
 const Country = sequelize.define('Country', {
   id: {
-    type: DataTypes.UUID,
-    unique: true,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
   name: {
