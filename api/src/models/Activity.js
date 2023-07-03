@@ -3,7 +3,7 @@ const sequelize = require('../database/database')
 
 const Activity = sequelize.define('Activity', {
   id: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     unique: true,
     primaryKey: true
   },
