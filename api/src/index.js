@@ -9,6 +9,8 @@ const routes = require('./routes/index')
 const app = express();
 const PORT = 8888;
 
+app.use(express.json())
+
 app.use('/', routes);
 
 async function main(){
