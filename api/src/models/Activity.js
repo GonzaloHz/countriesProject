@@ -4,6 +4,7 @@ const sequelize = require('../database/database')
 const Activity = sequelize.define('Activity', {
   id: {
     type: DataTypes.INTEGER,
+    autoIncrement: true,
     unique: true,
     primaryKey: true
   },

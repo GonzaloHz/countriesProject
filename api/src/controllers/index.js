@@ -5,7 +5,7 @@ const getCountriesApi = async () => {
         const countriesApi = await axios.get(process.env.DB_URL)
         const countriesMaped = await countriesApi.data.map(c => {
             const country = {
-                name: c.name.official,
+                name: c.name.common,
                 flag: c.flags[1],
                 continent: c.continents[0],
                 capital: c.capital ? c.capital[0] : 'No data',
