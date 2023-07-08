@@ -1,9 +1,10 @@
-import {ALLCOUNTRIES, COUNTRYNAME} from "../Actions/actions"
+import {ALLACTIVITIES, ALLCOUNTRIES, COUNTRYNAME} from "../Actions/actions"
 
 const initialState = {
     countries: {},
     countriesCopy: {},
-    countriesCopy2: {}
+    countriesCopy2: {},
+    activities: {}
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -16,10 +17,14 @@ const rootReducer = (state = initialState, action) => {
                 countriesCopy2: action.payload.Countries
             }
         case COUNTRYNAME:
-            console.log(action.payload)
-            return{
+            return {
                 ...state,
                 countries: action.payload.country
+            }
+        case ALLACTIVITIES:
+            return {
+                ...state,
+                activities: action.payload.activities
             }
         default:
             return {
