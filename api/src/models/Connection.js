@@ -1,5 +1,5 @@
-const {Activity} = require('./Activity')
-const {Country} = require('./Country')
+const Activities = require('./Activity')
+const Countries = require('./Country')
 
-Country.belongsToMany(Activity,{through:'countryActivity'})
-Activity.belongsToMany(Country,{through:'countryActivity'})
+Countries.belongsToMany(Activities,{through:'countryActivity'})
+Activities.belongsToMany(Countries,{through:'countryActivity'})
