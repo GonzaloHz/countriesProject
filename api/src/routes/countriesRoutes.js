@@ -7,13 +7,13 @@ const { Op } = require("sequelize");
 const app = express();
 
 app.get('/name', async (req, res) => {
-    const { qname, qcontinent } = req.query;
+    const { qname, qcontinent, qActivityName } = req.query;
     var newName
     if(qname){
         newName = qname[0].toUpperCase() + qname.substring(1).toLowerCase()
     }
     try {
-        if(!qname && !qcontinent) {
+        if(!qname && !qcontinent && !qActivityName) {
             const allCountries = await Countries.findAll({
                 include: {
                     model: Activities
@@ -23,7 +23,7 @@ app.get('/name', async (req, res) => {
                 'country': allCountries
             })
         }
-        if(qname && !qcontinent){
+        if(qname && !qcontinent && !qActivityName){
             const chosenCountry = await Countries.findAll({
                 where: {
                     name: {
@@ -45,7 +45,7 @@ app.get('/name', async (req, res) => {
             return res.status(200).json({
                 'country': chosenCountry
             })
-        }else if(!qname && qcontinent) {
+        }else if(!qname && qcontinent && !qActivityName) {
             const oldCountries = await Countries.findAll({
                 where: {
                     continent: qcontinent
@@ -58,8 +58,83 @@ app.get('/name', async (req, res) => {
             return res.status(200).json({
                 'country': oldCountries
             })
+        }else if(qname && qcontinent && !qActivityName){
+            const countryTwoFiltered = await Countries.findAll({
+                where: {
+                    name: {
+                        [Op.or]: {
+                            [Op.substring]: newName,
+                            [Op.substring]: qname,
+                            [Op.startsWith]: qname,
+                            [Op.startsWith]: newName,
+                            [Op.endsWith]: qname,
+                            [Op.endsWith]: newName
+                        }
+                    },
+                    continent: qcontinent
+                },
+                include: {
+                    model: Activities
+                }
+            })
+            return res.status(200).json({
+                'country': countryTwoFiltered
+            })
+        }else if(!qname && !qcontinent && qActivityName) {
+            const allCountries = await Countries.findAll({
+                include: {
+                    model: Activities,
+                    where: {
+                        name: qActivityName
+                    }
+                }
+            })
+            return res.status(200).json({
+                'country': allCountries
+            })
+        }else if(!qname && qcontinent && qActivityName) {
+            const allCountries = await Countries.findAll({
+                where: {
+                    continent: qcontinent
+                }
+            },{
+                include: {
+                    model: Activities,
+                    where: {
+                        name: qActivityName
+                    }
+                }
+            })
+            return res.status(200).json({
+                'country': allCountries
+            })
+        }else if(qname && !qcontinent && qActivityName) {
+            const allCountries = await Countries.findAll({
+                where: {
+                    name: {
+                        [Op.or]: {
+                            [Op.substring]: newName,
+                            [Op.substring]: qname,
+                            [Op.startsWith]: qname,
+                            [Op.startsWith]: newName,
+                            [Op.endsWith]: qname,
+                            [Op.endsWith]: newName
+                        }
+                    }
+                }
+            },{
+                include: {
+                    model: Activities,
+                    where: {
+                        name: qActivityName
+                    }
+                }
+            })
+            return res.status(200).json({
+                'country': allCountries
+            })
         }
-        const countryTwoFiltered = await Countries.findAll({
+        const countryThreeFiltered = await Countries.findAll({
             where: {
                 name: {
                     [Op.or]: {
@@ -74,11 +149,14 @@ app.get('/name', async (req, res) => {
                 continent: qcontinent
             },
             include: {
-                model: Activities
+                model: Activities,
+                where: {
+                    name: qActivityName
+                }
             }
         })
         return res.status(200).json({
-            'country': countryTwoFiltered
+            'country': countryThreeFiltered
         })
     } catch (error) {
         console.log(error)
