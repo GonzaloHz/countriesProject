@@ -1,11 +1,16 @@
 const express = require('express')
 const Activities = require('../models/Activity')
+const Countries = require('../models/Country')
 
 const app = express();
 
 app.get('/', async (req, res)=>{
     try {
-        const allTheActivities = await Activities.findAll()
+        const allTheActivities = await Activities.findAll({
+            include: {
+                model: Countries
+            }
+        })
         if(!allTheActivities) throw new Error('There is no activities loaded')
         return res.status(200).json({
             'activities': allTheActivities
@@ -16,9 +21,9 @@ app.get('/', async (req, res)=>{
 })
 
 app.post('/', async (req, res) => {
-    const { name, dificculty, duration, season } = req.body
+    const { name, dificculty, duration, season, idCountry } = req.body
     try {
-        if(!name || !dificculty || !season) throw new Error('There is not all the information I need')
+        if(!name || !dificculty || !season || !idCountry) throw new Error('There is not all the information I need')
         const oldActivity = await Activities.findOne({
             where: {
                 name: name,
@@ -27,6 +32,12 @@ app.post('/', async (req, res) => {
                 duration: duration
             }
         })
+        const countryById = await Countries.findOne({
+            where: {
+                id: idCountry
+            }
+        })
+        if(!countryById) throw new Error('There is not all the information I need')
         if(oldActivity) throw new Error('This activity is already registered')
         const newActivity = await Activities.create({
             name: name,
@@ -34,6 +45,7 @@ app.post('/', async (req, res) => {
             season: season,
             duration: duration
         })
+        await newActivity.addCountries(countryById)
         return res.status(200).json({
             'activity': newActivity
         })

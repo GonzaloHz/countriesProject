@@ -1,22 +1,84 @@
 const express = require('express')
 const Countries = require('../models/Country')
+const Activities = require('../models/Activity')
 const getCountries = require('../controllers/index')
+const { Op } = require("sequelize");
 
 const app = express();
 
 app.get('/name', async (req, res) => {
-    const { qname } = req.query;
+    const { qname, qcontinent } = req.query;
+    var newName
+    if(qname){
+        newName = qname[0].toUpperCase() + qname.substring(1).toLowerCase()
+    }
     try {
-        if(!qname) throw new Error(`There is not a valid name`)
-        const newName = qname[0].toUpperCase() + qname.substring(1).toLowerCase()
-        const chosenCountry = await Countries.findOne({
+        if(!qname && !qcontinent) {
+            const allCountries = await Countries.findAll({
+                include: {
+                    model: Activities
+                }
+            })
+            return res.status(200).json({
+                'country': allCountries
+            })
+        }
+        if(qname && !qcontinent){
+            const chosenCountry = await Countries.findAll({
+                where: {
+                    name: {
+                        [Op.or]: {
+                            [Op.substring]: newName,
+                            [Op.substring]: qname,
+                            [Op.startsWith]: qname,
+                            [Op.startsWith]: newName,
+                            [Op.endsWith]: qname,
+                            [Op.endsWith]: newName
+                        }
+                    }
+                },
+                include: {
+                    model: Activities
+                }
+            })
+            if(!chosenCountry) throw new Error('There is not a valid name')
+            return res.status(200).json({
+                'country': chosenCountry
+            })
+        }else if(!qname && qcontinent) {
+            const oldCountries = await Countries.findAll({
+                where: {
+                    continent: qcontinent
+                },
+                include: {
+                    model: Activities
+                }
+            })
+            if(!oldCountries) throw new Error('There is not a valid input for a continent')
+            return res.status(200).json({
+                'country': oldCountries
+            })
+        }
+        const countryTwoFiltered = await Countries.findAll({
             where: {
-                name: newName
+                name: {
+                    [Op.or]: {
+                        [Op.substring]: newName,
+                        [Op.substring]: qname,
+                        [Op.startsWith]: qname,
+                        [Op.startsWith]: newName,
+                        [Op.endsWith]: qname,
+                        [Op.endsWith]: newName
+                    }
+                },
+                continent: qcontinent
+            },
+            include: {
+                model: Activities
             }
         })
-        if(!chosenCountry) throw new Error(`There isn't a valid name`)
         return res.status(200).json({
-            'country': chosenCountry
+            'country': countryTwoFiltered
         })
     } catch (error) {
         console.log(error)
@@ -30,7 +92,10 @@ app.get('/:idCountry', async (req, res) => {
         const chosenId = await Countries.findOne({
             where: {
                 id: idCountry
-            }    
+            },
+            include: {
+                model: Activities
+            }
         })    
         if(!chosenId) throw new Error('There is no id valid')
         return res.status(200).json({
@@ -44,7 +109,11 @@ app.get('/:idCountry', async (req, res) => {
 app.get('/', async (req, res)=>{
     try {
         const newCountries = await getCountries()
-        var oldCountries = await Countries.findAll()
+        var oldCountries = await Countries.findAll({
+            include: {
+                model: Activities
+            }
+        })
         if(oldCountries.length === 0){
             oldCountries = await Countries.bulkCreate(newCountries);
         }

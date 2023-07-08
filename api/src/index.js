@@ -1,14 +1,17 @@
 const express = require('express')
 const sequelize = require('./database/database')
+const cors = require('cors')
 
-require('./models/Activity')
-require('./models/Country')
+require('./models/Connection')
+// require('./models/Activity')
+// require('./models/Country')
 
 const routes = require('./routes/index')
 
 const app = express();
 const PORT = 8888;
 
+app.use(cors())
 app.use(express.json())
 
 app.use('/', routes);
