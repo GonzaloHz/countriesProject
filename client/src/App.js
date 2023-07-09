@@ -5,7 +5,7 @@ import Navbar from './Components/Navbar/Navbar';
 
 function App() {
   return(
-  <div>
+  <div className="overflow-hidden">
     <Navbar />
     <Routes>
       <Route path='' element={<Home />} />
