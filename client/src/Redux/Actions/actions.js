@@ -3,6 +3,7 @@ import axios from "axios"
 export const ALLCOUNTRIES = 'ALLCOUNTRIES'
 export const COUNTRYNAME = 'COUNTRYNAME'
 export const ALLACTIVITIES = 'ALLACTIVITIES'
+export const GETCOUNTRYBYID = 'GETCOUNTRYBYID'
 
 
 export const getAllCountries = () => {
@@ -36,6 +37,18 @@ export const getAllActivities = () => {
     .then(response => {
       dispatch({
         type: ALLACTIVITIES,
+        payload: response.data
+      })
+    })
+  }
+}
+
+export const getCountryById = (idCountry) => {
+  return async function(dispatch) {
+    return axios.get(`http://localhost:8888/countries/${idCountry}`)
+    .then(response => {
+      dispatch({
+        type: GETCOUNTRYBYID,
         payload: response.data
       })
     })

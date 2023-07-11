@@ -10,7 +10,7 @@ const Landing = () =>{
   }
 
   return(
-    <div className="flex bg-bg-landing h-screen bg-no-repeat  bg-cover bg-paddingRight" >
+    <div className="flex bg-bg-landing h-screen bg-no-repeat bg-cover bg-paddingRight" >
       <div className="hidden lg:flex flex-col h-screen w-2/4 justify-center items-center backdrop-blur shadow-xl">
         <h1 className="text-8xl font-mono font-bold text-amber-400 stroke-black" style={{"WebkitTextStroke": "2px black"}}>HENRY TRAVEL</h1>
         <img src={logoImg} alt="none" style={{width:"603px", height:"414px"}}/>
