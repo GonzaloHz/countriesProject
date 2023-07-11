@@ -32,6 +32,12 @@ const Country = sequelize.define('Country', {
   population: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  lat: {
+    type: DataTypes.FLOAT
+  },
+  lng: {
+    type: DataTypes.FLOAT
   }
 });
 
