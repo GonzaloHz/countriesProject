@@ -7,17 +7,31 @@ const { Op } = require("sequelize");
 const app = express();
 
 app.get('/name', async (req, res) => {
-    const { qname, qcontinent, qActivityName } = req.query;
+    const { qname, qcontinent, qActivityName, qNameOrPoP, qOrder, qOffset, qLimit } = req.query;
     var newName
+    let qNamedOrPoped
+    let qOrdered
+    if((!qNameOrPoP) || (qNameOrPoP !== 'name' && qNameOrPoP !== 'population')) {
+        qNamedOrPoped = 'name'
+    }else{
+        qNamedOrPoped = qNameOrPoP
+    }
+    if((!qOrder) || (qOrder !== 'ASC' && qOrder !== 'DESC')) {
+        qOrdered = 'ASC'
+    }else{
+        qOrdered = qOrder
+    }
     if(qname){
         newName = qname[0].toUpperCase() + qname.substring(1).toLowerCase()
     }
     try {
         if(!qname && !qcontinent && !qActivityName) {
             const allCountries = await Countries.findAll({
+                order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
                 include: {
                     model: Activities
-                }
+                },
+                offset: qOffset, limit: qLimit
             })
             return res.status(200).json({
                 'country': allCountries
@@ -37,9 +51,11 @@ app.get('/name', async (req, res) => {
                         }
                     }
                 },
+                order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
                 include: {
                     model: Activities
-                }
+                },
+                offset: qOffset, limit: qLimit
             })
             if(!chosenCountry) throw new Error('There is not a valid name')
             return res.status(200).json({
@@ -50,9 +66,11 @@ app.get('/name', async (req, res) => {
                 where: {
                     continent: qcontinent
                 },
+                order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
                 include: {
                     model: Activities
-                }
+                },
+                offset: qOffset, limit: qLimit
             })
             if(!oldCountries) throw new Error('There is not a valid input for a continent')
             return res.status(200).json({
@@ -73,21 +91,25 @@ app.get('/name', async (req, res) => {
                     },
                     continent: qcontinent
                 },
+                order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
                 include: {
                     model: Activities
-                }
+                },
+                offset: qOffset, limit: qLimit
             })
             return res.status(200).json({
                 'country': countryTwoFiltered
             })
         }else if(!qname && !qcontinent && qActivityName) {
             const allCountries = await Countries.findAll({
+                order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
                 include: {
                     model: Activities,
                     where: {
                         name: qActivityName
                     }
-                }
+                },
+                offset: qOffset, limit: qLimit
             })
             return res.status(200).json({
                 'country': allCountries
@@ -96,14 +118,15 @@ app.get('/name', async (req, res) => {
             const allCountries = await Countries.findAll({
                 where: {
                     continent: qcontinent
-                }
-            },{
+                },
+                order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
                 include: {
                     model: Activities,
                     where: {
                         name: qActivityName
                     }
-                }
+                },
+                offset: qOffset, limit: qLimit
             })
             return res.status(200).json({
                 'country': allCountries
@@ -121,14 +144,15 @@ app.get('/name', async (req, res) => {
                             [Op.endsWith]: newName
                         }
                     }
-                }
-            },{
+                },
+                order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
                 include: {
                     model: Activities,
                     where: {
                         name: qActivityName
                     }
-                }
+                },
+                offset: qOffset, limit: qLimit
             })
             return res.status(200).json({
                 'country': allCountries
@@ -148,12 +172,14 @@ app.get('/name', async (req, res) => {
                 },
                 continent: qcontinent
             },
+            order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
             include: {
                 model: Activities,
                 where: {
                     name: qActivityName
                 }
-            }
+            },
+            offset: qOffset, limit: qLimit
         })
         return res.status(200).json({
             'country': countryThreeFiltered
@@ -185,12 +211,27 @@ app.get('/:idCountry', async (req, res) => {
 })    
 
 app.get('/', async (req, res)=>{
+    const { qNameOrPoP, qOrder, qOffset, qLimit } = req.query;
+    let qNamedOrPoped
+    let qOrdered
+    if((!qNameOrPoP) || (qNameOrPoP !== 'name' && qNameOrPoP !== 'population')) {
+        qNamedOrPoped = 'name'
+    }else{
+        qNamedOrPoped = qNameOrPoP
+    }
+    if((!qOrder) || (qOrder !== 'ASC' && qOrder !== 'DESC')) {
+        qOrdered = 'ASC'
+    }else{
+        qOrdered = qOrder
+    }
     try {
         const newCountries = await getCountries()
         var oldCountries = await Countries.findAll({
             include: {
                 model: Activities
-            }
+            },
+            order: [[qNamedOrPoped, qOrdered], [{model:Activities}, 'id', 'ASC']],
+            offset: qOffset, limit: qLimit
         })
         if(oldCountries.length === 0){
             oldCountries = await Countries.bulkCreate(newCountries);
