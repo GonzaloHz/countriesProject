@@ -11,7 +11,9 @@ const getCountriesApi = async () => {
                 capital: c.capital ? c.capital[0] : 'No data',
                 subregion: c.subregion,
                 area: c.area,
-                population: c.population
+                population: c.population,
+                lat: c.latlng[0],
+                lng: c.latlng[1]
             }
             return country
             

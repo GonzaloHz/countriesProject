@@ -3,11 +3,12 @@ import axios from "axios"
 export const ALLCOUNTRIES = 'ALLCOUNTRIES'
 export const COUNTRYNAME = 'COUNTRYNAME'
 export const ALLACTIVITIES = 'ALLACTIVITIES'
+export const GETCOUNTRYBYID = 'GETCOUNTRYBYID'
 
 
-export const getAllCountries = () => {
+export const getAllCountries = (qOffset, qLimit) => {
     return async function (dispatch) {
-      return axios.get(`http://localhost:8888/countries`)
+      return axios.get(`http://localhost:8888/countries?qOffset=${qOffset}&qLimit=${qLimit}`)
       .then(response => {
         dispatch({ 
             type: ALLCOUNTRIES,
@@ -18,9 +19,9 @@ export const getAllCountries = () => {
     };
 };
 
-export const filteredByName = (name, qcontinent, qactivity) => {
+export const filteredByName = (name, qcontinent, qactivity, qNameOrPop, qOrder, qOffset, qLimit) => {
     return async function (dispatch) {
-      return axios.get(`http://localhost:8888/countries/name?qname=${name}&qcontinent=${qcontinent}&qActivityName=${qactivity}`)
+      return axios.get(`http://localhost:8888/countries/name?qname=${name}&qcontinent=${qcontinent}&qActivityName=${qactivity}&qNameOrPoP=${qNameOrPop}&qOrder=${qOrder}&qOffset=${qOffset}&qLimit=${qLimit}`)
       .then(response => {
         dispatch({
           type: COUNTRYNAME,
@@ -36,6 +37,18 @@ export const getAllActivities = () => {
     .then(response => {
       dispatch({
         type: ALLACTIVITIES,
+        payload: response.data
+      })
+    })
+  }
+}
+
+export const getCountryById = (idCountry) => {
+  return async function(dispatch) {
+    return axios.get(`http://localhost:8888/countries/${idCountry}`)
+    .then(response => {
+      dispatch({
+        type: GETCOUNTRYBYID,
         payload: response.data
       })
     })
