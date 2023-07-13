@@ -67,3 +67,9 @@ export const addOneActivity = (inputActivity) => {
     })
   }
 }
+
+export const deleteOneActivity = (id) => {
+  return async function() {
+    return axios.delete(`http://localhost:8888/activities/${id}`)
+  }
+}
