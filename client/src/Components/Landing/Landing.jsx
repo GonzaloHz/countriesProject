@@ -1,11 +1,15 @@
 import logoImg from "../../assets/henryBG-removebg.png"
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getAllCountries } from "../../Redux/Actions/actions";
 
 const Landing = () =>{
 
-  const navigate= useNavigate()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const Home = () => {
+    dispatch(getAllCountries(0, 250))
     navigate('/home')
   }
 

@@ -13,7 +13,6 @@ const rootReducer = (state = initialState, action) => {
         case ALLCOUNTRIES:
             return {
                 ...state,
-                countries: action.payload.Countries,
                 countriesCopy: action.payload.Countries,
                 countriesCopy2: action.payload.Countries
             }

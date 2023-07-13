@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { filteredByName, getAllActivities, getAllCountries } from "../../Redux/Actions/actions";
+import { filteredByName, getAllActivities } from "../../Redux/Actions/actions";
 import Card from "../Cards/Card";
 import { useEffect, useState } from "react";
 
@@ -15,7 +15,6 @@ const Home = () => {
     const [qNameOrPoP, setqNameOrPoP] = useState("")
     const [page, setPage] = useState(1)
     useEffect(()=>{
-        dispatch(getAllCountries((page-1)*(window.screen.width>1024?8:2) , (window.screen.width>1024?8:2)))
         dispatch(getAllActivities())
     }, [dispatch])
     useEffect(()=>{
@@ -62,7 +61,7 @@ const Home = () => {
                 </div>
                 <div className="flex lg:order-first">
                     <select onChange={(e)=>filteredByContinent(e)} className="bg-amber-400 rounded-lg py-2 px-2 border-solid border-2 border-black">
-                        <option disabled selected>Filtered by continent</option>
+                        <option hidden>Filtered by continent</option>
                         <option value="">Show All</option> 
                         <option value="Africa">Africa</option> 
                         <option value="North America">North America</option>
@@ -75,7 +74,7 @@ const Home = () => {
                 </div>
                 <div className="flex">
                     <select onChange={(e)=>filteredByActivity(e)} className="bg-amber-400 rounded-lg py-2 px-2 border-solid border-2 border-black">
-                        <option disabled selected>Filtered by activity</option>
+                        <option hidden>Filtered by activity</option>
                         <option value="">Show All</option>
                         {activities?.length>0 && activities?.map(a=>
                             <option key={a.name} value={a.name}>{a.name}</option>

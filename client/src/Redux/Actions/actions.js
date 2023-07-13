@@ -4,6 +4,7 @@ export const ALLCOUNTRIES = 'ALLCOUNTRIES'
 export const COUNTRYNAME = 'COUNTRYNAME'
 export const ALLACTIVITIES = 'ALLACTIVITIES'
 export const GETCOUNTRYBYID = 'GETCOUNTRYBYID'
+export const ADDACTIVITY = 'ADDACTIVITY'
 
 
 export const getAllCountries = (qOffset, qLimit) => {
@@ -49,6 +50,18 @@ export const getCountryById = (idCountry) => {
     .then(response => {
       dispatch({
         type: GETCOUNTRYBYID,
+        payload: response.data
+      })
+    })
+  }
+}
+
+export const addOneActivity = (inputActivity) => {
+  return async function(dispatch) {
+    return axios.post('http://localhost:8888/activities/', inputActivity)
+    .then(response => {
+      dispatch({
+        type: ADDACTIVITY,
         payload: response.data
       })
     })
